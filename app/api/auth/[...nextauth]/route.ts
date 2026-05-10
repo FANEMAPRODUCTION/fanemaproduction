@@ -1,10 +1,18 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "@/lib/prisma";
+
+let adapter;
+let prisma;
+
+if (process.env.DATABASE_URL) {
+  const { PrismaAdapter } = require("@next-auth/prisma-adapter");
+  const { prisma: prismaClient } = require("@/lib/prisma");
+  adapter = PrismaAdapter(prismaClient);
+  prisma = prismaClient;
+}
 
 const handler = NextAuth({
-  adapter: process.env.DATABASE_URL ? PrismaAdapter(prisma) : undefined,
+  adapter,
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID || "",
@@ -19,7 +27,7 @@ const handler = NextAuth({
   },
   callbacks: {
     session: async ({ session, user }) => {
-      if (session.user) {
+      if (session.user && user) {
         (session.user as any).id = user.id;
       }
       return session;
