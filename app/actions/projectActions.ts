@@ -44,7 +44,7 @@ export async function createProject(formData: FormData) {
         .replace(/(^-|-$)/g, ""),
       description: payload.description,
       category: payload.category,
-      tags: payload.tags,
+      tags: payload.tags.join(","),
       coverUrl: payload.coverUrl,
       creator: {
         connect: {
@@ -58,7 +58,7 @@ export async function createProject(formData: FormData) {
           width: asset.width,
           height: asset.height,
           order: index,
-          metadata: asset.metadata
+          metadata: JSON.stringify(asset.metadata)
         }))
       }
     }

@@ -20,7 +20,7 @@ export default async function Page(props: any) {
       description={project.description}
       coverUrl={project.coverUrl}
       creatorName={project.creator.name}
-      tags={project.tags}
+      tags={(project.tags || "").split(",").filter(Boolean)}
       mediaAssets={project.mediaAssets.map((asset) => ({
         url: asset.url,
         altText: asset.altText,
